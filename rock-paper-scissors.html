@@ -74,7 +74,7 @@
         font-size: 1.8rem;
       }
 
-      @media (max-width: 768px) {
+      @media screen and (max-width: 768px) {
         .choices {
           gap: 20px;
         }
@@ -86,24 +86,26 @@
       }
 
       @media (max-width: 480px) {
+        h1 {
+          font-size: 2rem;
+        }
         .scoreboard {
-          font-size: 1.2rem;
+          font-size: 1.4rem;
         }
         .result {
-          font-size: 1.2rem;
+          font-size: 1.4rem;
+        }
+        .choices {
+          gap: 20px;
         }
         .choice {
-          width: 70px;
-          height: 70px;
-          font-size: 1.8rem;
+          width: 80px;
+          height: 80px;
+          font-size: 2.2rem;
         }
         button {
           padding: 12px 24px;
-          font-size: 1.2rem;
-        }
-        .choices {
-          gap: 15px;
-          margin: 20px 0;
+          font-size: 1.4rem;
         }
       }
     </style>

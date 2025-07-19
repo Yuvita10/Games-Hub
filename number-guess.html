@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Number Guessing Game</title>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #252121;
+        color: #fff;
+        text-align: center;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      h1 {
+        color: #83718d;
+        font-size: 2.5rem;
+      }
+
+      .board {
+        display: grid;
+        grid-template-columns: repeat(3, 130px);
+        gap: 10px;
+        justify-content: center;
+        margin: 10px auto;
+      }
+
+      p {
+        font-size: 1.4rem;
+        margin-top: 60px;
+      }
+      input,
+      button {
+        padding: 10px;
+        font-size: 1.2rem;
+        margin: 10px;
+      }
+      #message {
+        margin-top: 20px;
+        font-size: 1.4rem;
+        /* color: #444; */
+      }
+      #restartBtn {
+        margin-top: 20px;
+        display: none;
+        padding: 10px 20px;
+        background: #83718d;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      #restartBtn:hover {
+        background: #685572;
+      }
+      #checkBtn {
+        width: 120px;
+        background: #f4efef;
+        border-radius: 4px;
+        border: 1px solid gray;
+        cursor: pointer;
+      }
+
+      @media (max-width: 768px) {
+        body {
+          padding: 20px;
+        }
+        input,
+        button {
+          padding: 8px;
+          font-size: 1rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 10px;
+        }
+        input,
+        button {
+          padding: 6px;
+          font-size: 0.8rem;
+        }
+        p {
+          font-size: 1.2rem;
+        }
+        #message {
+          font-size: 1.2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🔢 Guess the Number</h1>
+    <p>Guess the number between <b>1 To 100</b>.</p>
+    <input type="number" id="guessInput" placeholder="Enter your guess" />
+    <button id="checkBtn">Check</button>
+
+    <div id="message"></div>
+    <button id="restartBtn">Play Again</button>
+    <button
+      onclick="toggleHowToPlay(this)"
+      style="
+        margin-top: 10px;
+        background: #83718d;
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+      "
+    >
+      📘 How to Play
+    </button>
+
+    <div
+      class="how-to-play"
+      style="
+        display: none;
+        font-size: 1.3rem;
+        padding: 10px 15px;
+        text-align: center;
+      "
+    >
+      <p>
+        The computer chooses a number between 1 to 100. You try to guess it!
+        <br />
+        After each guess, you will get a hint whether the number is higher or
+        lower. <br />
+        Try to guess in the fewest attempts!
+      </p>
+    </div>
+
+    <script>
+      function toggleHowToPlay(button) {
+        const info = button.nextElementSibling;
+        if (info.style.display === "none" || info.style.display === "") {
+          info.style.display = "block";
+          button.textContent = "❌ Hide";
+        } else {
+          info.style.display = "none";
+          button.textContent = "📘 How to Play";
+        }
+      }
+      let secretNumber = Math.floor(Math.random() * 100) + 1;
+      let attempts = 0;
+
+      const input = document.getElementById("guessInput");
+      const checkBtn = document.getElementById("checkBtn");
+      const message = document.getElementById("message");
+      const restartBtn = document.getElementById("restartBtn");
+
+      checkBtn.addEventListener("click", () => {
+        const guess = Number(input.value);
+        if (!guess || guess < 1 || guess > 100) {
+          message.textContent = "Please enter a number between 1 and 100.";
+          return;
+        }
+
+        attempts++;
+
+        if (guess === secretNumber) {
+          message.textContent = `🎉 Correct! You guessed it in ${attempts} tries.`;
+          checkBtn.disabled = true;
+          restartBtn.style.display = "inline-block";
+        } else if (guess < secretNumber) {
+          message.textContent = "📈 Too low! Try a higher number.";
+        } else {
+          message.textContent = "📉 Too high! Try a lower number.";
+        }
+      });
+
+      restartBtn.addEventListener("click", () => {
+        secretNumber = Math.floor(Math.random() * 100) + 1;
+        attempts = 0;
+        message.textContent = "";
+        input.value = "";
+        checkBtn.disabled = false;
+        restartBtn.style.display = "none";
+      });
+    </script>
+  </body>
+</html>

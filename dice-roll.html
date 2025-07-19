@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dice Battle: You vs Computer</title>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #252121;
+        color: #fff;
+        text-align: center;
+        padding: 50px 20px;
+      }
+
+      h1 {
+        color: #83718d;
+        margin-bottom: 80px;
+      }
+
+      .board {
+        display: grid;
+        grid-template-columns: repeat(3, 130px);
+        gap: 10px;
+        justify-content: center;
+        margin: 30px auto;
+      }
+
+      .dice-section {
+        display: flex;
+        justify-content: center;
+        gap: 50px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+      }
+
+      .scene {
+        width: 140px;
+        height: 140px;
+        perspective: 600px;
+      }
+
+      .dice {
+        width: 120px;
+        height: 120px;
+        position: relative;
+        transform-style: preserve-3d;
+        transform: rotateX(0deg) rotateY(0deg);
+        transition: transform 1s ease-in-out;
+      }
+
+      .face {
+        position: absolute;
+        width: 140px;
+        height: 140px;
+        background: white;
+        color: #47394f;
+        border: 2px solid #ccc;
+        border-radius: 16px;
+        font-size: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .front {
+        transform: rotateY(0deg) translateZ(70px);
+      }
+      .back {
+        transform: rotateY(180deg) translateZ(70px);
+      }
+      .right {
+        transform: rotateY(90deg) translateZ(70px);
+      }
+      .left {
+        transform: rotateY(-90deg) translateZ(70px);
+      }
+      .top {
+        transform: rotateX(90deg) translateZ(70px);
+      }
+      .bottom {
+        transform: rotateX(-90deg) translateZ(70px);
+      }
+
+      button {
+        padding: 12px 22px;
+        font-size: 1rem;
+        background: #554b5a;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 45px;
+      }
+
+      button:hover {
+        background: #6f5c78;
+      }
+
+      #result {
+        margin-top: 55px;
+        font-size: 1.3rem;
+      }
+
+      .label {
+        margin-bottom: 30px;
+        font-weight: bold;
+        color: #83718d;
+        font-size: 1.3rem;
+      }
+      .button{
+        margin: 30px;
+      }
+      button#restartBtn,
+      button#howBtn {
+        display: inline-block;
+        margin: 10px;
+        padding: 0.6rem 1.2rem;
+        background-color: #83718d;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        cursor: pointer;
+        font-size: 1.2rem;
+      }
+      button#restartBtn:hover,
+      button#howBtn:hover {
+        background-color: #604d69;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <h1>
+      🎲 Dice Roll <br />
+      You vs Computer
+    </h1>
+
+    <div class="dice-section">
+      <div>
+        <div class="label">👤 You</div>
+        <div class="scene">
+          <div class="dice" id="userDice">
+            <div class="face front">1</div>
+            <div class="face back">6</div>
+            <div class="face right">3</div>
+            <div class="face left">4</div>
+            <div class="face top">2</div>
+            <div class="face bottom">5</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="label">🤖 Computer</div>
+        <div class="scene">
+          <div class="dice" id="computerDice">
+            <div class="face front">1</div>
+            <div class="face back">6</div>
+            <div class="face right">3</div>
+            <div class="face left">4</div>
+            <div class="face top">2</div>
+            <div class="face bottom">5</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="result">
+      Click to roll your dice first, then computer will roll!
+    </div>
+    <div class="button">
+    <button id="restartBtn" onclick="rollBothDice()" >🎲 Roll Dice</button>
+
+    <button id="howBtn" onclick="toggleHowToPlay(this)">📘 How to Play</button>
+    </div>
+    <div
+      class="how-to-play"
+      style="
+        display: none;
+        font-size: 1.3rem;
+        padding: 10px 15px;
+        text-align: center;
+      "
+    >
+      <p>
+        Click the Roll Dice button to roll the dice. <br />
+        After you roll,the computer rolls too. <br />
+        Whoever gets the higher number wins the round!<br />
+        If both numbers are same, then it's a draw.
+      </p>
+    </div>
+
+    <script>
+      function toggleHowToPlay(button) {
+        const info = document.querySelector(".how-to-play");
+        if (info.style.display === "none" || info.style.display === "") {
+          info.style.display = "block";
+          button.textContent = "❌ Hide";
+        } else {
+          info.style.display = "none";
+          button.textContent = "📘 How to Play";
+        }
+      }
+      const userDice = document.getElementById("userDice");
+      const computerDice = document.getElementById("computerDice");
+      const result = document.getElementById("result");
+
+      const rotations = {
+        1: { x: 0, y: 0 },
+        2: { x: -90, y: 0 },
+        3: { x: 0, y: -90 },
+        4: { x: 0, y: 90 },
+        5: { x: 90, y: 0 },
+        6: { x: 0, y: 180 },
+      };
+
+      function getRandomRoll() {
+        return Math.floor(Math.random() * 6) + 1;
+      }
+
+      function applyRotation(diceEl, roll) {
+        const rot = rotations[roll];
+        const extraX = Math.floor(Math.random() * 4) * 360;
+        const extraY = Math.floor(Math.random() * 4) * 360;
+        diceEl.style.transform = `rotateX(${rot.x + extraX}deg) rotateY(${
+          rot.y + extraY
+        }deg)`;
+      }
+
+      function rollBothDice() {
+        const userRoll = getRandomRoll();
+        applyRotation(userDice, userRoll);
+        result.textContent = "You rolled... 🤔";
+
+        setTimeout(() => {
+          const computerRoll = getRandomRoll();
+          applyRotation(computerDice, computerRoll);
+
+          setTimeout(() => {
+            if (userRoll === computerRoll) {
+              result.textContent = `🟰 Both rolled ${userRoll}. It's a tie!`;
+            } else if (userRoll > computerRoll) {
+              result.textContent = `🎉 You: ${userRoll} | 🤖 Computer: ${computerRoll} — You win!`;
+            } else {
+              result.textContent = `😓 You: ${userRoll} | 🤖 Computer: ${computerRoll} — Computer wins!`;
+            }
+          }, 1000);
+        }, 1000);
+      }
+    </script>
+  </body>
+</html>

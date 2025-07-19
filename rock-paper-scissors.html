@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Rock Paper Scissors</title>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #252121;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      h1 {
+        color: #83718d;
+        margin-bottom: 20px;
+      }
+
+      .choices {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin: 30px 0;
+      }
+
+      .choice {
+        width: 100px;
+        height: 100px;
+        background: white;
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        font-size: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+
+      .choice:hover {
+        transform: scale(1.1);
+      }
+
+      .result {
+        margin: 30px 0;
+        font-size: 1.3rem;
+      }
+
+      .scoreboard {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+      }
+
+      button {
+        padding: 10px 20px;
+        background: #83718d;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #5c4a65;
+      }
+
+      .emoji {
+        font-size: 1.8rem;
+      }
+
+      @media (max-width: 768px) {
+        .choices {
+          gap: 20px;
+        }
+        .choice {
+          width: 80px;
+          height: 80px;
+          font-size: 2rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .scoreboard {
+          font-size: 1.2rem;
+        }
+        .result {
+          font-size: 1.2rem;
+        }
+        .choice {
+          width: 70px;
+          height: 70px;
+          font-size: 1.8rem;
+        }
+        button {
+          padding: 12px 24px;
+          font-size: 1.2rem;
+        }
+        .choices {
+          gap: 15px;
+          margin: 20px 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>✊ Rock ✋ Paper ✌️ Scissors</h1>
+
+    <div class="scoreboard">
+      🧑 You: <span id="userScore">0</span> | 🤖 Computer:
+      <span id="computerScore">0</span>
+    </div>
+
+    <div class="choices">
+      <div class="choice" data-choice="rock">✊</div>
+      <div class="choice" data-choice="paper">✋</div>
+      <div class="choice" data-choice="scissors">✌️</div>
+    </div>
+
+    <div class="result" id="result">Make your move!</div>
+
+    <button onclick="resetGame()">🔁 Reset Game</button>
+    <button
+      onclick="toggleHowToPlay(this)"
+      style="
+        margin-top: 10px;
+        background: #83718d;
+        color: white;
+        border: none;
+        padding: 10px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+      "
+    >
+      📘 How to Play
+    </button>
+
+    <div
+      class="how-to-play"
+      style="
+        display: none;
+        font-size: 1.3rem;
+        padding: 10px 15px;
+        text-align: center;
+      "
+    >
+      <p>
+        choose Rock (✊), paper (✋), or scissor (✌️).<br />
+        The computer will randomly choose too. <br />
+        Rock beats Scissors, Scissors beats Paper, Paper beats Rock!
+      </p>
+    </div>
+
+    <script>
+      function toggleHowToPlay(button) {
+        const info = button.nextElementSibling;
+        if (info.style.display === "none" || info.style.display === "") {
+          info.style.display = "block";
+          button.textContent = "❌ Hide";
+        } else {
+          info.style.display = "none";
+          button.textContent = "📘 How to Play";
+        }
+      }
+      const choices = document.querySelectorAll(".choice");
+      const result = document.getElementById("result");
+      const userScoreSpan = document.getElementById("userScore");
+      const computerScoreSpan = document.getElementById("computerScore");
+
+      const emojis = {
+        rock: "✊",
+        paper: "✋",
+        scissors: "✌️",
+      };
+
+      let userScore = 0;
+      let computerScore = 0;
+
+      choices.forEach((choice) => {
+        choice.addEventListener("click", () => {
+          const userChoice = choice.getAttribute("data-choice");
+          const computerChoice = getComputerChoice();
+          const outcome = getResult(userChoice, computerChoice);
+
+          displayResult(userChoice, computerChoice, outcome);
+          updateScore(outcome);
+        });
+      });
+
+      function getComputerChoice() {
+        const options = ["rock", "paper", "scissors"];
+        return options[Math.floor(Math.random() * options.length)];
+      }
+
+      function getResult(user, computer) {
+        if (user === computer) return "draw";
+        if (
+          (user === "rock" && computer === "scissors") ||
+          (user === "paper" && computer === "rock") ||
+          (user === "scissors" && computer === "paper")
+        )
+          return "win";
+        return "lose";
+      }
+
+      function displayResult(user, computer, outcome) {
+        let message = `You chose ${emojis[user]} | Computer chose ${emojis[computer]} → `;
+
+        if (outcome === "win") {
+          message += "🎉 You Win!";
+        } else if (outcome === "lose") {
+          message += "😓 You Lose!";
+        } else {
+          message += "🤝 It's a Draw!";
+        }
+
+        result.textContent = message;
+      }
+
+      function updateScore(outcome) {
+        if (outcome === "win") userScore++;
+        else if (outcome === "lose") computerScore++;
+
+        userScoreSpan.textContent = userScore;
+        computerScoreSpan.textContent = computerScore;
+      }
+
+      function resetGame() {
+        userScore = 0;
+        computerScore = 0;
+        userScoreSpan.textContent = 0;
+        computerScoreSpan.textContent = 0;
+        result.textContent = "Make your move!";
+      }
+    </script>
+  </body>
+</html>

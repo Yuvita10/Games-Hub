@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quick Color Match</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #252121;
+      color: #fff;
+      text-align: center;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 70vh;
+      margin: 0;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #83718d;
+      margin-bottom: 50px;
+      margin-top: 70px;
+    }
+    .color-word {
+      font-size: 3rem;
+      margin: 0.7rem 0;
+    }
+    .buttons {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .color-btn {
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #fff;
+    }
+    .score, .timer {
+      margin-top: 1rem;
+      font-size: 1.5rem;
+    }
+    .hidden {
+      display: none;
+    }
+    #howToPlay {
+      margin-top: 1.7rem;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    button#startBtn, button#howBtn {
+      margin: 10px;
+      padding: 0.6rem 1.2rem;
+      background-color: #83718d;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+    button#startBtn:hover, button#howBtn:hover {
+      background-color: #604d69;
+    }
+    @media (max-width:430px) {
+      .color-btn{
+        flex: 1 1 45%;
+        font-size: 0.8rem;
+      }
+      button#startBtn, button#howBtn{
+        margin: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+   <h1>🎯 Quick Color Match</h1>
+ 
+  <div class="color-word" id="wordDisplay"></div>
+  <div class="buttons">
+    <button class="color-btn" style="background-color: red" data-color="Red">Red</button>
+    <button class="color-btn" style="background-color: blue" data-color="Blue">Blue</button>
+    <button class="color-btn" style="background-color: chocolate" data-color="Chocolate">Chocolate</button>
+    <button class="color-btn" style="background-color: purple" data-color="Purple">Purple</button>
+    <button class="color-btn" style="background-color: pink; color: black;" data-color="Pink">Pink</button>
+  </div>
+  <div class="score" id="scoreDisplay"></div>
+  <div class="timer" id="timerDisplay"></div>
+  <button id="startBtn">Start Game</button>
+  <button id="howBtn">How to Play</button>
+  <div id="howToPlay" class="hidden">
+    <p>A color name will appear on screen in a random color.</p>
+    <p>Your job is to click the button matching the <strong>name</strong> (not the color it is shown in).</p>
+    <p>If you click the wrong button, or run out of time, the game ends!</p>
+  </div>
+  <script>
+    const colors = ["Red", "Blue", "Chocolate", "Purple", "Pink"];
+    const wordDisplay = document.getElementById("wordDisplay");
+    const scoreDisplay = document.getElementById("scoreDisplay");
+    const timerDisplay = document.getElementById("timerDisplay");
+    const startBtn = document.getElementById("startBtn");
+    const howBtn = document.getElementById("howBtn");
+    const howToPlay = document.getElementById("howToPlay");
+    const buttons = document.querySelectorAll(".color-btn");
+
+    let correctColor = "";
+    let score = 0;
+    let gameOver = false;
+    let timer;
+    let timeLeft = 5;
+
+    howBtn.addEventListener("click", () => {
+      howToPlay.classList.toggle("hidden");
+    });
+
+    startBtn.addEventListener("click", () => {
+      score = 0;
+      gameOver = false;
+      scoreDisplay.textContent = "Score: 0";
+      timeLeft = 5;
+      startTimer();
+      nextRound();
+    });
+
+    buttons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (gameOver) return;
+        const chosenColor = btn.dataset.color;
+        if (chosenColor === correctColor) {
+          score++;
+          scoreDisplay.textContent = `Score: ${score}`;
+          timeLeft = 5;
+          nextRound();
+        } else {
+          endGame("Wrong choice!");
+        }
+      });
+    });
+
+    function nextRound() {
+      const randomWord = colors[Math.floor(Math.random() * colors.length)];
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      correctColor = randomWord;
+      wordDisplay.textContent = randomWord;
+      wordDisplay.style.color = randomColor.toLowerCase();
+    }
+
+    function startTimer() {
+      clearInterval(timer);
+      timer = setInterval(() => {
+        timerDisplay.textContent = `Time Left: ${timeLeft}s`;
+        timeLeft--;
+        if (timeLeft < 0) {
+          endGame("Time's up!");
+        }
+      }, 1000);
+    }
+
+    function endGame(message) {
+      clearInterval(timer);
+      wordDisplay.textContent = `Game Over! ${message}`;
+      gameOver = true;
+    }
+  </script>
+</body>
+</html>
